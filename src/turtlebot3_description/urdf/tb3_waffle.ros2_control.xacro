@@ -11,6 +11,7 @@
         </xacro:if>
         <xacro:unless value="${sim}">
           <!-- Add custom hardware interface here -->
+           <plugin>turtlebot3_hardware/TurtlebotSystemHardware</plugin>
         </xacro:unless>
       </hardware>
 
