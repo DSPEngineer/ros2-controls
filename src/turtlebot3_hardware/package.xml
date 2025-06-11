@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>turtlebot3_hardware</name>
+  <version>0.0.0</version>
+  <description>Hardware interface for TurtleBot3</description>
+  <maintainer email="user@todo.todo">user</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>hardware_interface</depend>
+  <depend>pluginlib</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <hardware_interface>
+      <pluginlib plugin="${prefix}/turtlebot3_hardware.xml"/>
+    </hardware_interface>
+  </export>
+</package>
