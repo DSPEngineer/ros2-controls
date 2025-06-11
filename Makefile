@@ -12,7 +12,8 @@ RUN_AS_GID=$(shell id -g)
 RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 # RMW_IMPLEMENTATION="rmw_fastrtps_cpp"
 
-DOCKER_RUN_ARGS=--rm -it \
+CONTAINER_CMD=sudo podman
+CONTAINER_RUN_ARGS=--rm -it \
 		--platform $(PLATFORM) \
 		--network host \
 		--privileged \
@@ -31,32 +32,31 @@ version: ## print the package version
 
 .PHONY: run
 run: ## start container with shell
-	@docker run $(DOCKER_RUN_ARGS) \
+	@$(CONTAINER_CMD) run $(CONTAINER_RUN_ARGS) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
 		/bin/bash -i
 
 .PHONY: run-gpu
 run-gpu: ## start container with GPU with shell
-	@docker run $(DOCKER_RUN_ARGS) \
-		--runtime=nvidia \
-		--env NVIDIA_VISIBLE_DEVICES=nvidia.com/gpu=all \
-		--env NVIDIA_DRIVER_CAPABILITIES=all \
+	@$(CONTAINER_CMD) run $(CONTAINER_RUN_ARGS) \
+		--device nvidia.com/gpu=all \
+		--security-opt=label=disable \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
 		/bin/bash -i
 
 .PHONY: stop
 stop: ## stops running container
-	docker stop $(PACKAGE)
+	$(CONTAINER_CMD) stop $(PACKAGE)
 
 .PHONY: shell
 shell: ## get (another) shell to running container
-	docker exec -it $(PACKAGE) /bin/bash
+	$(CONTAINER_CMD) exec -it $(PACKAGE) /bin/bash
 
 .PHONY: image
 image: ## builds the docker image
-	docker build \
+	$(CONTAINER_CMD) build \
 		--platform $(PLATFORM) \
 		--build-arg USERNAME=$(USERNAME) \
 		--build-arg RUN_AS_UID=$(RUN_AS_UID) \
@@ -66,7 +66,7 @@ image: ## builds the docker image
 
 .PHONY: clean-image
 clean-image: ## builds the docker image without the cache
-	docker build \
+	$(CONTAINER_CMD) build \
 		--platform $(PLATFORM) \
 		--no-cache \
 		--pull \
@@ -78,7 +78,7 @@ clean-image: ## builds the docker image without the cache
 
 .PHONY: build
 build: image ## build current source in container
-	docker run --rm -t \
+	$(CONTAINER_CMD) run --rm -t \
 		--platform $(PLATFORM) \
 		--volume $(PWD):$(WORKSPACE) \
 		--name $(PACKAGE) \
@@ -91,14 +91,14 @@ clean: ## remove colcon build artifacts
 
 .PHONY: talker-demo
 talker-demo: ## run demo talker node
-	docker run $(DOCKER_RUN_ARGS) \
+	$(CONTAINER_CMD) run $(CONTAINER_RUN_ARGS) \
 		--name $(PACKAGE)-talker \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp talker"
 
 .PHONY: listener-demo
 listener-demo: ## run demo listener node
-	docker run $(DOCKER_RUN_ARGS) \
+	$(CONTAINER_CMD) run $(CONTAINER_RUN_ARGS) \
 		--name $(PACKAGE)-listener \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp listener"
@@ -106,4 +106,4 @@ listener-demo: ## run demo listener node
 .PHONY: install-multiarch
 install-multiarch: ## setup multiarch support on ubuntu
 	sudo apt-get install -y qemu-user-static
-	docker run --privileged --rm tonistiigi/binfmt --install all
+	$(CONTAINER_CMD) run --privileged --rm tonistiigi/binfmt --install all
