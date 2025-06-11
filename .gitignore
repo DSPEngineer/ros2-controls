@@ -1,0 +1,29 @@
+# ROS
+build/
+install/
+log/
+
+# Ignore some standard ROS files
+*.swp
+*~
+*.pyc
+*.bak
+
+# Binaries
+*.so
+*.a
+
+# IDE settings
+.idea/
+.vscode/
+*.user
+*.userprefs
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

@@ -10,7 +10,7 @@
           <plugin>gz_ros2_control/GazeboSimSystem</plugin>
         </xacro:if>
         <xacro:unless value="${sim}">
-          <!-- Add custom hardware interface here -->
+          <plugin>turtlebot3_hardware/Turtlebot3Hardware</plugin>
         </xacro:unless>
       </hardware>
 
