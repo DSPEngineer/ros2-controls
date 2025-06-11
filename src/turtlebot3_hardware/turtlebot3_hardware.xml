@@ -1,0 +1,9 @@
+<library path="turtlebot3_hardware">
+  <class name="turtlebot3_hardware/TurtlebotSystemHardware"
+         type="turtlebot3_hardware::TurtlebotSystemHardware"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Dynamixel motors ros2_control implementation using a system hardware interface-type.
+    </description>
+  </class>
+</library>
