@@ -23,8 +23,60 @@ hardware_interface::CallbackReturn Turtlebot3Hardware::on_init(
 
   RCLCPP_INFO(rclcpp::get_logger("Turtlebot3Hardware"), "on_init() successful");
 
-  hw_states_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
-  hw_commands_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  hw_commands_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  hw_states_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+  hw_states_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
+
+  for (const hardware_interface::ComponentInfo & joint : info_.joints)
+  {
+    // Turtlebot3Hardware has exactly two states and one command interface on each joint
+    if (joint.command_interfaces.size() != 1)
+    {
+      RCLCPP_FATAL(
+        rclcpp::get_logger("Turtlebot3Hardware"),
+        "Joint '%s' has %zu command interfaces found. 1 expected.", joint.name.c_str(),
+        joint.command_interfaces.size());
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+
+    if (joint.command_interfaces[0].name != hardware_interface::HW_IF_VELOCITY)
+    {
+      RCLCPP_FATAL(
+        rclcpp::get_logger("Turtlebot3Hardware"),
+        "Joint '%s' have %s command interfaces found. '%s' expected.", joint.name.c_str(),
+        joint.command_interfaces[0].name.c_str(), hardware_interface::HW_IF_VELOCITY);
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+
+    if (joint.state_interfaces.size() != 2)
+    {
+      RCLCPP_FATAL(
+        rclcpp::get_logger("Turtlebot3Hardware"),
+        "Joint '%s' has %zu state interface. 2 expected.", joint.name.c_str(),
+        joint.state_interfaces.size());
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+
+    if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION)
+    {
+      RCLCPP_FATAL(
+        rclcpp::get_logger("Turtlebot3Hardware"),
+        "Joint '%s' have '%s' as first state interface. '%s' expected.",
+        joint.name.c_str(), joint.state_interfaces[0].name.c_str(),
+        hardware_interface::HW_IF_POSITION);
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+
+    if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY)
+    {
+      RCLCPP_FATAL(
+        rclcpp::get_logger("Turtlebot3Hardware"),
+        "Joint '%s' have '%s' as second state interface. '%s' expected.",
+        joint.name.c_str(), joint.state_interfaces[1].name.c_str(),
+        hardware_interface::HW_IF_VELOCITY);
+      return hardware_interface::CallbackReturn::ERROR;
+    }
+  }
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
@@ -43,9 +95,9 @@ std::vector<hardware_interface::StateInterface> Turtlebot3Hardware::export_state
   std::vector<hardware_interface::StateInterface> state_interfaces;
   for (uint i = 0; i < info_.joints.size(); i++) {
     state_interfaces.emplace_back(hardware_interface::StateInterface(
-      info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_states_[i]));
+      info_.joints[i].name, hardware_interface::HW_IF_POSITION, &hw_states_position_[i]));
     state_interfaces.emplace_back(hardware_interface::StateInterface(
-      info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_states_[i]));
+      info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_states_velocity_[i]));
   }
 
   return state_interfaces;
@@ -57,7 +109,7 @@ std::vector<hardware_interface::CommandInterface> Turtlebot3Hardware::export_com
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (uint i = 0; i < info_.joints.size(); i++) {
     command_interfaces.emplace_back(hardware_interface::CommandInterface(
-      info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_commands_[i]));
+      info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &hw_commands_velocity_[i]));
   }
 
   return command_interfaces;

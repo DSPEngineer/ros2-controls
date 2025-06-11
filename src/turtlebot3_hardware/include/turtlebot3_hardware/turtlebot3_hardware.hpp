@@ -40,9 +40,12 @@ public:
     const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
 private:
-  // Store the command for the simulated robot
-  std::vector<double> hw_commands_;
-  std::vector<double> hw_states_;
+  // Store the command for the wheels
+  std::vector<double> hw_commands_velocity_;
+
+  // Store the state for the wheels
+  std::vector<double> hw_states_position_;
+  std::vector<double> hw_states_velocity_;
 };
 }  // namespace turtlebot3_hardware
 
