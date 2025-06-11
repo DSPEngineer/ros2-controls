@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Top level file which includes robot parts -->
+<robot name="turtlebot3" xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:arg name="sim" default="false" />
+    
+    <!-- Turtlebot 3 Base -->
+    <xacro:include filename="$(find turtlebot3_description)/urdf/tb3_waffle_macro.xacro" />
+    <xacro:turtlebot3_waffle/>
+
+    <!-- ROS2 Control -->
+    <xacro:include filename="$(find turtlebot3_description)/urdf/tb3_waffle.ros2_control.xacro"/>
+    <xacro:turtlebot3_ros2_control sim="$(arg sim)"/>
+
+</robot>
