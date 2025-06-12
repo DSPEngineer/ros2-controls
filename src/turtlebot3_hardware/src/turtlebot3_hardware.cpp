@@ -23,6 +23,10 @@ hardware_interface::CallbackReturn Turtlebot3Hardware::on_init(
 
   RCLCPP_INFO(rclcpp::get_logger("Turtlebot3Hardware"), "on_init() successful");
 
+  // Get hardware parameters
+  usb_port_ = info_.hardware_parameters["usb_port"];
+  baud_rate_ = std::stoi(info_.hardware_parameters["baud_rate"]);
+
   hw_commands_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
@@ -85,7 +89,20 @@ hardware_interface::CallbackReturn Turtlebot3Hardware::on_configure(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   RCLCPP_INFO(rclcpp::get_logger("Turtlebot3Hardware"), "on_configure() successful");
-  // TODO(anderson): setup communications
+
+  port_handler_ = dynamixel::PortHandler::getPortHandler(usb_port_.c_str());
+  packet_handler_ = dynamixel::PacketHandler::getPacketHandler(2.0);
+
+  if (!port_handler_->openPort()) {
+    RCLCPP_FATAL(rclcpp::get_logger("Turtlebot3Hardware"), "Failed to open port %s", usb_port_.c_str());
+    return hardware_interface::CallbackReturn::ERROR;
+  }
+
+  if (!port_handler_->setBaudRate(baud_rate_)) {
+    RCLCPP_FATAL(rclcpp::get_logger("Turtlebot3Hardware"), "Failed to set baud rate %d", baud_rate_);
+    return hardware_interface::CallbackReturn::ERROR;
+  }
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 
@@ -127,7 +144,11 @@ hardware_interface::CallbackReturn Turtlebot3Hardware::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
   RCLCPP_INFO(rclcpp::get_logger("Turtlebot3Hardware"), "on_deactivate() successful");
-  // TODO(anderson): disable motors
+
+  // The Dynamixel SDK's PortHandler API does not have a method to check if the port is open.
+  // We will unconditionally call closePort() here. It is safe to call on an already closed port.
+  port_handler_->closePort();
+
   return hardware_interface::CallbackReturn::SUCCESS;
 }
 

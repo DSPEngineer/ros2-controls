@@ -11,6 +11,8 @@
         </xacro:if>
         <xacro:unless value="${sim}">
           <plugin>turtlebot3_hardware/Turtlebot3Hardware</plugin>
+          <param name="usb_port">/dev/ttyDXL</param>
+          <param name="baud_rate">57600</param>
         </xacro:unless>
       </hardware>
 

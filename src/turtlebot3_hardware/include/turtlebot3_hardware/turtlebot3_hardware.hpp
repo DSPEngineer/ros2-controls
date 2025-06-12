@@ -10,6 +10,8 @@
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "rclcpp/macros.hpp"
 
+#include "dynamixel_sdk/dynamixel_sdk.h"
+
 namespace turtlebot3_hardware
 {
 class Turtlebot3Hardware : public hardware_interface::SystemInterface
@@ -46,6 +48,14 @@ private:
   // Store the state for the wheels
   std::vector<double> hw_states_position_;
   std::vector<double> hw_states_velocity_;
+
+  // Parameters for the Dynamixel SDK
+  std::string usb_port_;
+  uint32_t baud_rate_;
+
+  // Dynamixel SDK objects
+  dynamixel::PortHandler * port_handler_;
+  dynamixel::PacketHandler * packet_handler_;
 };
 }  // namespace turtlebot3_hardware
 

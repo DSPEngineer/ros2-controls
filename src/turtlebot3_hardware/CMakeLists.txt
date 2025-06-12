@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
+find_package(dynamixel_sdk REQUIRED)
 
 # create the hardware interface library
 add_library(turtlebot3_hardware SHARED
@@ -23,6 +24,7 @@ ament_target_dependencies(turtlebot3_hardware PUBLIC
   rclcpp
   hardware_interface
   pluginlib
+  dynamixel_sdk
 )
 
 # create the plugin
