@@ -12,6 +12,13 @@
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
+// Dynamixel Control table address
+#define ADDR_OPERATING_MODE 11
+#define ADDR_TORQUE_ENABLE 64
+#define ADDR_GOAL_VELOCITY 104
+#define ADDR_PRESENT_VELOCITY 128
+#define ADDR_PRESENT_POSITION 132
+
 namespace turtlebot3_hardware
 {
 class Turtlebot3Hardware : public hardware_interface::SystemInterface
@@ -58,6 +65,9 @@ private:
   // Dynamixel SDK objects
   dynamixel::PortHandler * port_handler_;
   dynamixel::PacketHandler * packet_handler_;
+  dynamixel::GroupSyncWrite * group_sync_write_goal_velocity_;
+  dynamixel::GroupSyncRead * group_sync_read_present_position_;
+  dynamixel::GroupSyncRead * group_sync_read_present_velocity_;
 };
 }  // namespace turtlebot3_hardware
 
