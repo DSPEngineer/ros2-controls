@@ -52,6 +52,8 @@ private:
   // Parameters for the Dynamixel SDK
   std::string usb_port_;
   uint32_t baud_rate_;
+  uint8_t left_wheel_id_;
+  uint8_t right_wheel_id_;
 
   // Dynamixel SDK objects
   dynamixel::PortHandler * port_handler_;

@@ -26,6 +26,8 @@ hardware_interface::CallbackReturn Turtlebot3Hardware::on_init(
   // Get hardware parameters
   usb_port_ = info_.hardware_parameters["usb_port"];
   baud_rate_ = std::stoi(info_.hardware_parameters["baud_rate"]);
+  left_wheel_id_ = std::stoi(info_.hardware_parameters["left_wheel_id"]);
+  right_wheel_id_ = std::stoi(info_.hardware_parameters["right_wheel_id"]);
 
   hw_commands_velocity_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
   hw_states_position_.resize(info_.joints.size(), std::numeric_limits<double>::quiet_NaN());
@@ -102,6 +104,19 @@ hardware_interface::CallbackReturn Turtlebot3Hardware::on_configure(
     RCLCPP_FATAL(rclcpp::get_logger("Turtlebot3Hardware"), "Failed to set baud rate %d", baud_rate_);
     return hardware_interface::CallbackReturn::ERROR;
   }
+
+  uint8_t dxl_error;
+  if (packet_handler_->ping(port_handler_, left_wheel_id_, &dxl_error) != COMM_SUCCESS) {
+    RCLCPP_FATAL(rclcpp::get_logger("Turtlebot3Hardware"), "Failed to ping left wheel motor");
+    return hardware_interface::CallbackReturn::ERROR;
+  }
+
+  if (packet_handler_->ping(port_handler_, right_wheel_id_, &dxl_error) != COMM_SUCCESS) {
+    RCLCPP_FATAL(rclcpp::get_logger("Turtlebot3Hardware"), "Failed to ping right wheel motor");
+    return hardware_interface::CallbackReturn::ERROR;
+  }
+
+  RCLCPP_INFO(rclcpp::get_logger("Turtlebot3Hardware"), "Successfully pinged motors");
 
   return hardware_interface::CallbackReturn::SUCCESS;
 }
