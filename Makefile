@@ -6,7 +6,8 @@ PLATFORM=linux/amd64
 # PLATFORM=linux/arm64
 CONTAINER:=ghcr.io/freshrobotics/$(PACKAGE)-$(PLATFORM):$(VERSION)
 USERNAME=seymour
-WORKSPACE=/home/$(USERNAME)/workspace
+USR_HOME=/home/$(USERNAME)
+WORKSPACE=$(USR_HOME)/workspace
 RUN_AS_UID=$(shell id -u)
 RUN_AS_GID=$(shell id -g)
 RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
@@ -18,6 +19,7 @@ DOCKER_RUN_ARGS=--rm -it \
 		--privileged \
 		--env DISPLAY \
 		--env RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION} \
+		--volume ${HOME}/.bash_aliases:$(USR_HOME)/.bash_aliases \
 		--volume /dev:/dev:rw \
 		--volume $(PWD):$(WORKSPACE)
 
