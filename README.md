@@ -33,7 +33,13 @@ ROS Control Workshop with Turtlebot3
 3. Launch the simulation
 
     ```
-    $ ros2 launch turtlebo3_gz_bringup tb3_gz.launch.py 
+    $ ros2 launch turtlebot3_gz_bringup tb3_gz.launch.py 
+    ```
+
+4. Launch teleop-joystick
+
+    ```
+    $ ros2 launch teleop_twist_joy teleop-launch.py publish_stamped_twist:=true joy_vel:=diff_drive_controller/reference config_filepath:=src/turtlebot3_gz_bringup/config/8bitdo.yaml
     ```
 
 ## TODO:
