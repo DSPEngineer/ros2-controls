@@ -8,9 +8,9 @@
 #include <stdio.h>
 
 // Control table address
-#define ADDR_PRO_TORQUE_ENABLE          562                 // Control table address is different in Dynamixel model
-#define ADDR_PRO_GOAL_POSITION          596
-#define ADDR_PRO_PRESENT_POSITION       611
+#define ADDR_PRO_TORQUE_ENABLE          64                 // Control table address is different in Dynamixel model
+#define ADDR_PRO_GOAL_POSITION          116
+#define ADDR_PRO_PRESENT_POSITION       132
 
 // Data Byte Length
 #define LEN_PRO_GOAL_POSITION           4
@@ -28,9 +28,9 @@
 
 #define TORQUE_ENABLE                   1                   // Value for enabling the torque
 #define TORQUE_DISABLE                  0                   // Value for disabling the torque
-#define DXL_MINIMUM_POSITION_VALUE      -150000             // Dynamixel will rotate between this value
-#define DXL_MAXIMUM_POSITION_VALUE      150000              // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
-#define DXL_MOVING_STATUS_THRESHOLD     20                  // Dynamixel moving status threshold
+#define DXL_MINIMUM_POSITION_VALUE      0                   // Dynamixel will rotate between this value
+#define DXL_MAXIMUM_POSITION_VALUE      4096           // and this value (note that the Dynamixel would not move when the position value is out of movable range. Check e-manual about the range of the Dynamixel you use.)
+#define DXL_MOVING_STATUS_THRESHOLD     24                  // Dynamixel moving status threshold
 
 #define ESC_ASCII_VALUE                 0x1b
 
