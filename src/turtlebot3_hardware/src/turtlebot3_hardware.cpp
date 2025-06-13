@@ -4,6 +4,8 @@
 
 #include <fcntl.h>
 #include <termios.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 // Control table address
 #define ADDR_PRO_TORQUE_ENABLE          562                 // Control table address is different in Dynamixel model
@@ -37,7 +39,25 @@ namespace turtlebot3_hardware
 {
     CallbackReturn TurtlebotHardware::on_init(const hardware_interface::HardwareInfo & info)
     {
+        logger_ = std::make_shared<rclcpp::Logger>(rclcpp::get_logger("TurtlebotHardware"));
+
         RCLCPP_INFO_STREAM(get_logger(), "on_init");
+
+        // Initialize base class with info received from URDF
+        if (hardware_interface::SystemInterface::on_init(info) != CallbackReturn::SUCCESS) {
+            return CallbackReturn::ERROR;
+        }
+
+        // Example: Validate the URDF ROS2 control config
+        for (const hardware_interface::ComponentInfo & joint : info_.joints)
+        {
+            // Validate that the robot has two state interfaces - POSITION & VELOCITY
+            // and one command interfaces - VELOCITY
+
+            RCLCPP_INFO_STREAM(get_logger(), "Joint " << joint.name.c_str() << " has " << joint.command_interfaces.size() << " command interfaces of type " << joint.command_interfaces[0].name << ".");
+            
+            // On validation error - return CallbackReturn::ERROR
+        }
         return CallbackReturn::SUCCESS;
     }
 
@@ -71,7 +91,8 @@ namespace turtlebot3_hardware
         uint8_t dxl_error = 0;                            // Dynamixel error
         uint8_t param_goal_position[4];
         int32_t dxl1_present_position = 0, dxl2_present_position = 0;                         // Present position
-        std::string msg = ""; 
+        
+        RCLCPP_INFO_STREAM(get_logger(), "opening port");
 
         // Open port
         if (port_handler_->openPort())

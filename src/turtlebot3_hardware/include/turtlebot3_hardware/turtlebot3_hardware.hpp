@@ -47,10 +47,10 @@ private:
     std::shared_ptr<rclcpp::Logger> logger_;
 
     // Dynamixel SDK interface to motor port
-    dynamixel::PortHandler * port_handler_;
+    dynamixel::PortHandler *port_handler_;
 
     // Dynamixel message packet handler
-    dynamixel::PacketHandler * packet_handler_;
+    dynamixel::PacketHandler *packet_handler_;
 
     // Reader for synchronous position reads from all motors
     std::unique_ptr<dynamixel::GroupSyncRead> present_position_reader_;
