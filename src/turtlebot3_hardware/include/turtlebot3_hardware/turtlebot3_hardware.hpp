@@ -60,6 +60,15 @@ private:
 
     // Writer for synchronous velocity writes to all motors
     std::unique_ptr<dynamixel::GroupSyncWrite> goal_velocity_writer_;
+
+    uint8_t dxl_error_ = 0;   
+    int dxl_comm_result_ = COMM_TX_FAIL;       
+    uint8_t param_goal_position_[4];
+
+    int configure_dynamixel(uint8_t id);
+    int eval_dxl_result(void);
+    int stop_dynamixel(uint8_t id);
+    int start_dynamixel(uint8_t id);
 };
 
 } // namespace turtlebot3_hardware
