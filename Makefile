@@ -5,7 +5,7 @@ VERSION:=0.1.0
 PLATFORM=linux/amd64
 # PLATFORM=linux/arm64
 CONTAINER:=ghcr.io/freshrobotics/$(PACKAGE)-$(PLATFORM):$(VERSION)
-USERNAME=seymour
+USERNAME=$(shell id -un )
 USR_HOME=/home/$(USERNAME)
 WORKSPACE=$(USR_HOME)/workspace
 RUN_AS_UID=$(shell id -u)
@@ -20,6 +20,15 @@ DOCKER_RUN_ARGS=--rm -it \
 		--env DISPLAY \
 		--env RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION} \
 		--volume ${HOME}/.bash_aliases:$(USR_HOME)/.bash_aliases \
+		--volume ${HOME}/.vscode:$(USR_HOME)/.vscode \
+		--volume ${HOME}/.gitconfig:$(USR_HOME)/.gitconfig \
+		--volume ${HOME}/.gitignore:$(USR_HOME)/.gitignore \
+		--volume ${HOME}/.emacs:$(USR_HOME)/.emacs \
+		--volume ${HOME}/.emacs.d:$(USR_HOME)/.emacs.d \
+		--volume ${HOME}/.config:$(USR_HOME)/.config \
+		--volume ${HOME}/.local:$(USR_HOME)/.local \
+		--volume ${HOME}/.ssh:$(USR_HOME)/.ssh \
+		--volume ${HOME}/.Xauthority:$(USR_HOME)/.Xauthority \
 		--volume /dev:/dev:rw \
 		--volume $(PWD):$(WORKSPACE)
 

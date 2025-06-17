@@ -26,13 +26,19 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
     build-essential \
     curl \
     dirmngr \
+    emacs \
     git \
     gnupg2 \
+    iproute2 \
+    net-tools \
+    ssh \
     python-is-python3 \
     python3-pip \
     software-properties-common \
     sudo \
     tzdata \
+    usbutils \
+    wget \
     x11-apps \
   && add-apt-repository universe \
   && rm -rf /var/lib/apt/lists/*
@@ -46,6 +52,7 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
   && apt-get update && apt-get install -q -y --no-install-recommends \
     python3-colcon-common-extensions \
     python3-colcon-mixin \
+    python3-debugpy \
     python3-rosdep \
     python3-vcstool \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
@@ -62,6 +69,75 @@ RUN colcon mixin add default \
     https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
   colcon metadata update
 
+################################################################################
+## Build and Install plotjuggler, from source
+##
+RUN  apt update \
+  && apt install -y -q \
+                 binutils-dev \
+                 cmake \
+                 protobuf-compiler \
+                 liblua5.1-0-dev \
+                 libmosquittopp-dev \
+                 liblz4-dev \
+                 libprotoc-dev \
+                 libzmq3-dev \
+                 libqt5opengl5-dev \
+                 libqt5svg5-dev \
+                 libqt5websockets5-dev \
+                 libqt5x11extras5-dev \
+                 libzstd-dev \
+                 nlohmann-json3-dev \
+		 qtbase5-dev \
+                 ros-${ROS_DISTRO}-ament-cmake \
+                 ros-${ROS_DISTRO}-ament-cmake-core \
+                 ros-${ROS_DISTRO}-ament-cmake-export-dependencies \
+                 ros-${ROS_DISTRO}-ament-cmake-libraries \
+                 ros-${ROS_DISTRO}-ament-cmake-python  \
+                 ros-${ROS_DISTRO}-ament-cmake-ros \
+                 ros-${ROS_DISTRO}-ament-cmake-target-dependencies \
+                 ros-${ROS_DISTRO}-ament-package \
+                 ros-${ROS_DISTRO}-rclcpp \
+                 ros-${ROS_DISTRO}-rclcpp-components \
+                 ros-${ROS_DISTRO}-rosidl-default-generators \
+                 ros-${ROS_DISTRO}-rosidl-default-runtime \
+     && apt-get autoremove -y \
+     && apt-get clean  \
+     && rm -rf /var/lib/apt/lists/*  \
+     && rosdep init && rosdep update  \
+     && mkdir -p /opt/plotjuggler/src  \
+     && cd /opt/plotjuggler/src  \
+     && git clone https://github.com/PlotJuggler/plotjuggler_msgs.git  \
+     && git clone https://github.com/facontidavide/PlotJuggler.git  \
+     && git clone https://github.com/PlotJuggler/plotjuggler-ros-plugins.git  \
+     && cd /opt/plotjuggler  \
+     && . /opt/ros/${ROS_DISTRO}/setup.sh  \
+     && export AMENT_PREFIX_PATH=/opt/ros/${ROS_DISTRO}  \
+     && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
+     && export ROS_VERSION=2  \
+     && export ROS_PYTHON_VERSION=3  \
+     && rosdep install --from-paths src --ignore-src -y  \
+     && colcon build \
+            --cmake-args \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DROS_DISTRO=${ROS_DISTRO} \
+            -DROS_VERSION=2 \
+            -DCMAKE_PREFIX_PATH="/opt/ros/${ROS_DISTRO}"
+
+
+########################################################################
+## To install VSCode: (or code-insiders) directly from Microsoft
+RUN  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg \
+  && install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg \
+  && echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null \
+  && rm -f packages.microsoft.gpg \
+  && apt update \
+  && apt install code -q -y \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+
 # Remove default ubuntu user
 # create non-root user with given username
 # and allow sudo without password
@@ -76,7 +152,9 @@ RUN userdel -r ubuntu \
     -m ${USERNAME} \
   && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
   && chmod 0440 /etc/sudoers.d/${USERNAME} \
+  && echo "export PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$PATH" >> ${HOME_DIR}/.bashrc \
   && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/plotjuggler/install/setup.bash" >> ${HOME_DIR}/.bashrc \
   && echo "source install/setup.bash" >> ${HOME_DIR}/.bashrc \
   && echo "source /etc/profile.d/bash_completion.sh" >> ${HOME_DIR}/.bashrc \
   && chown -R ${USERNAME}: ${HOME_DIR}
@@ -104,11 +182,15 @@ ADD --chown=${USERNAME}:${USERNAME} ./src ${WORKSPACE}/src
 WORKDIR ${WORKSPACE}
 USER ${USERNAME}
 RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
-  && sudo apt-get update \
-  && sudo rosdep init \
-  && rosdep update --rosdistro ${ROS_DISTRO} \
-  && rosdep install -y -r -i --from-paths ${WORKSPACE}/src \
-  && sudo rm -rf /var/lib/apt/lists/*"
+    && source /opt/plotjuggler/install/setup.bash \
+  "
+
+# RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
+#  && sudo apt-get update \
+#  && sudo rosdep init \
+#  && rosdep update --rosdistro ${ROS_DISTRO} \
+#  && rosdep install -y -r -i --from-paths ${WORKSPACE}/src \
+#  && sudo rm -rf /var/lib/apt/lists/*"
 
 # by default hold container open in background
 CMD ["tail", "-f", "/dev/null"]
