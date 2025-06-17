@@ -184,9 +184,9 @@ ADD --chown=${USERNAME}:${USERNAME} ./src ${WORKSPACE}/src
 # install deps as non-root user
 WORKDIR ${WORKSPACE}
 USER ${USERNAME}
-RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
-    && source /opt/plotjuggler/install/setup.bash \
-  "
+#RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
+#    && source /opt/plotjuggler/install/setup.bash \
+#  "
 
 # RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
 #  && sudo apt-get update \
