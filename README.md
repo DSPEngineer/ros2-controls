@@ -117,3 +117,10 @@ ros2 launch turtlebot3_control control.launch.py
     *   Implement a `ros2_control_node` that subscribes to `/cmd_vel` (type `geometry_msgs/msg/Twist`).
     *   In the subscriber callback, convert the `Twist` message's linear and angular velocities into left and right wheel velocities.
     *   Publish the calculated wheel velocities to the hardware interface.
+
+## Logic Flow (from Harshil)
+
+*   **Joy node** - reads the joystick positions publishes on `joy` topic
+*   **`teleop_twist_joy`** - subscribes to `joy` topic, publishes `TwistStamped` on `cmd_vel` topic
+*   **Diff drive controller** - subscribes to `cmd_vel`, computes left and right wheel velocity commands and makes it available to the hardware interface via intra-process comms. It can be retrieved from the `joint_command_interfaces_` or whatever the export data structure is (if implementing the `export_state_interfaces` / `export command_interfaces` method.
+*   **Diff drive controller** also reads the state from the HW interface and computes odometry and publishes on `odom` topic.
