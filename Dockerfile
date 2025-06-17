@@ -149,6 +149,7 @@ RUN userdel -r ubuntu \
     -s /bin/bash \
     --gid ${RUN_AS_GID} \
     --uid ${RUN_AS_UID} \
+    -G users,nogroup,dialout,sudo,adm \
     -m ${USERNAME} \
   && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
   && chmod 0440 /etc/sudoers.d/${USERNAME} \
