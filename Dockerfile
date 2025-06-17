@@ -154,10 +154,12 @@ RUN userdel -r ubuntu \
   && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
   && chmod 0440 /etc/sudoers.d/${USERNAME} \
   && echo "export PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$PATH" >> ${HOME_DIR}/.bashrc \
-  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash" >> ${HOME_DIR}/.bashrc \
-  && echo "source /opt/plotjuggler/install/setup.bash" >> ${HOME_DIR}/.bashrc \
-  && echo "source install/setup.bash" >> ${HOME_DIR}/.bashrc \
-  && echo "source /etc/profile.d/bash_completion.sh" >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"                                >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/plotjuggler/install/setup.bash"                              >> ${HOME_DIR}/.bashrc \
+  && echo "source install/setup.bash"                                               >> ${HOME_DIR}/.bashrc \
+  && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""                        >> ${HOME_DIR}/.bashrc \
+  && echo "[ -n \"\${SETUP}\" ] && source \${SETUP}"                                >> ${HOME_DIR}/.bashrc \
+  && echo "source /etc/profile.d/bash_completion.sh"                                >> ${HOME_DIR}/.bashrc \
   && chown -R ${USERNAME}: ${HOME_DIR}
 
 # create workspace and source dir
