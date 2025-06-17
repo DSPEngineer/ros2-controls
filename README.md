@@ -33,7 +33,7 @@ ROS Control Workshop with Turtlebot3
 3. Launch the simulation
 
     ```
-    $ ros2 launch turtlebo3_gz_bringup tb3_gz.launch.py 
+    $ ros2 launch  turtlebot3_gz_bringup tb3_gz.launch.py
     ```
 
 ## TODO:
