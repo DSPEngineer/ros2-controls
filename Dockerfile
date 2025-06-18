@@ -23,6 +23,7 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
   && apt-get update && apt-get install -q -y --no-install-recommends \
     bash-completion \
+    black \
     build-essential \
     curl \
     dirmngr \
@@ -123,6 +124,8 @@ RUN  apt update \
             -DROS_DISTRO=${ROS_DISTRO} \
             -DROS_VERSION=2 \
             -DCMAKE_PREFIX_PATH="/opt/ros/${ROS_DISTRO}"
+##     && sudo mv  /etc/ros/rosdep/sources.list.d/20-default.list  /etc/ros/rosdep/sources.list.d/21-default.list
+##     && rosdep install --from-paths src --ignore-src -y  \
 
 
 ########################################################################
@@ -135,8 +138,7 @@ RUN  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor
   && apt install code -q -y \
   && apt-get autoremove -y \
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-
+  && rm -rf /var/lib/apt/lists/
 
 # Remove default ubuntu user
 # create non-root user with given username
@@ -181,19 +183,16 @@ ADD ./dds_config ${DDS_CONFIG_DIR}
 # copy code into workspace and set ownership to user
 ADD --chown=${USERNAME}:${USERNAME} ./src ${WORKSPACE}/src
 
+
 # install deps as non-root user
 WORKDIR ${WORKSPACE}
 USER ${USERNAME}
-#RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
-#    && source /opt/plotjuggler/install/setup.bash \
-#  "
-
-# RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
-#  && sudo apt-get update \
-#  && sudo rosdep init \
-#  && rosdep update --rosdistro ${ROS_DISTRO} \
-#  && rosdep install -y -r -i --from-paths ${WORKSPACE}/src \
-#  && sudo rm -rf /var/lib/apt/lists/*"
+##  && rosdep install -y -r -i --from-paths ${WORKSPACE}/src \
+RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
+ && sudo apt-get update \
+ && sudo rosdep init \
+ && rosdep update --rosdistro ${ROS_DISTRO} \
+ && sudo rm -rf /var/lib/apt/lists/*"
 
 # by default hold container open in background
 CMD ["tail", "-f", "/dev/null"]
