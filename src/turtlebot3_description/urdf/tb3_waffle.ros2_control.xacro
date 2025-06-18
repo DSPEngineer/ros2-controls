@@ -13,8 +13,11 @@
           <plugin>turtlebot3_hardware/TurtlebotHardware</plugin>
           <param name="usb_port">/dev/ttyDXL</param>
           <param name="baud_rate">57600</param>
-          <param name="left_wheel_id">1</param>
-          <param name="right_wheel_id">2</param>
+          <param name="left_wheel_id">2</param>
+          <param name="right_wheel_id">1</param>
+          <param name="vel_profile">100</param>
+          <param name="vel_factor">70</param>
+          <param name="vel_ratio">0.229</param>
         </xacro:unless>
       </hardware>
 

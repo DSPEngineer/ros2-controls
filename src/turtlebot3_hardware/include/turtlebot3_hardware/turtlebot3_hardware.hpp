@@ -17,8 +17,52 @@
 
 #include <dynamixel_sdk/dynamixel_sdk.h>
 
+// Control table address
+#define ADDR_PRO_TORQUE_ENABLE          64                 // Control table address is different in Dynamixel model
+#define ADDR_PRO_GOAL_POSITION          116
+#define ADDR_PRO_PRESENT_POSITION       132
+#define ADDR_PRO_OPERTAING_MODE         11
+#define ADDR_PRO_GOAL_VELOCITY          104
+#define ADDR_PRO_PRESET_VELOCITY        128
+#define ADDR_PRO_PROFILE_VELOCITY       112
+
+// operation modes
+#define VELOCITY_CONTROL_MODE           1
+#define POSITION_CONTROL_MODE           3
+
+// Data Byte Length
+#define LEN_PRO_GOAL_POSITION           4
+#define LEN_PRO_PRESENT_POSITION        4
+#define LEN_PRO_GOAL_VELOCITY           4
+#define LEN_PRO_PRESENT_VELOCITY        4
+
+// Protocol version
+#define PROTOCOL_VERSION                2.0                 // See which protocol version is used in the Dynamixel
+
+#define TORQUE_ENABLE                   1                   // Value for enabling the torque
+#define TORQUE_DISABLE                  0                   // Value for disabling the torque
+
+#define DXL_SUCCESS                     0
+#define DXL_ERROR                       1
+
+
 namespace turtlebot3_hardware
 {
+struct ComConfig {
+    std::string usb_port = "";
+    uint32_t  baud_rate = 0;
+};
+
+struct WheelConfig {
+    std::string joint_name = "";
+    double state_pos = 0.0;
+    double state_vel = 0.0;
+    double cmd_vel = 0.0;
+    uint8_t id = 0;
+    uint32_t vel_profile = 0;
+    uint32_t vel_factor = 0;
+    double vel_ratio = 0.0;
+};
 
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
 
@@ -65,32 +109,21 @@ private:
     // Writer for synchronous velocity writes to all motors
     dynamixel::GroupSyncWrite *goal_velocity_writer_;
 
-    std::string usb_port_;
-    uint32_t baud_rate_;
-    uint8_t left_wheel_id_;
-    uint8_t right_wheel_id_;
+    ComConfig com_cfg_;
+    WheelConfig wheel_l_;
+    WheelConfig wheel_r_;
+
     uint8_t dxl_error_ = 0;   
     int dxl_comm_result_ = COMM_TX_FAIL;       
     uint8_t dxl_goal_velocity_[4];
 
-
-    std::vector<double> joint_commands_vel_;
-    std::vector<double> joint_states_pos_;
-    std::vector<double> joint_states_vel_;
-    std::vector<uint8_t> joint_ids_;
-    std::map<uint8_t,uint8_t*> joint_control_map_;
-
-    int configure_dynamixel(uint8_t id);
+    int configure_dynamixel(WheelConfig *wheel);
     int eval_dxl_result(void);
     int stop_dynamixel(uint8_t id);
     int start_dynamixel(uint8_t id);
-    int set_joint_velocities();
+    int set_joint_cmd(WheelConfig *wheel);
+    int set_joint_states(WheelConfig *wheel);
 
-    /* 
-    CallbackReturn set_joint_positions();
-    CallbackReturn set_joint_velocities();
-    CallbackReturn set_joint_params();
-    */
 };
 
 } // namespace turtlebot3_hardware
