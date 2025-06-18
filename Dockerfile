@@ -166,6 +166,7 @@ RUN userdel -r ubuntu \
     --uid ${RUN_AS_UID} \
     -G users,nogroup,dialout,sudo,adm \
     -m ${USERNAME} \
+  && passwd -d ${USERNAME} \
   && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
   && chmod 0440 /etc/sudoers.d/${USERNAME} \
   && echo "export PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$PATH" >> ${HOME_DIR}/.bashrc \
