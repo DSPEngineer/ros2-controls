@@ -18,6 +18,8 @@ ENV FASTRTPS_DEFAULT_PROFILES_FILE="${DDS_CONFIG_DIR}/fastrtps.xml"
 # RMW_IMPLEMENTATION -> "rmw_cyclonedds_cpp" | "rmw_fastrtps_cpp"
 ENV RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 
+
+################################################################################
 # setup utc timeszone & install base ubuntu packages
 RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
@@ -44,6 +46,8 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
   && add-apt-repository universe \
   && rm -rf /var/lib/apt/lists/*
 
+
+################################################################################
 # setup ros package overlay & install ros packages
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
     -o /usr/share/keyrings/ros-archive-keyring.gpg \
@@ -62,6 +66,8 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
     ros-${ROS_DISTRO}-ros-gz \
   && rm -rf /var/lib/apt/lists/*
 
+
+################################################################################
 # setup colcon mixin and metadata
 RUN colcon mixin add default \
     https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
@@ -69,6 +75,7 @@ RUN colcon mixin add default \
   colcon metadata add default \
     https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
   colcon metadata update
+
 
 ################################################################################
 ## Build and Install Dynamixel SDK 
@@ -130,9 +137,6 @@ RUN  apt update \
             -DROS_DISTRO=${ROS_DISTRO} \
             -DROS_VERSION=2 \
             -DCMAKE_PREFIX_PATH="/opt/ros/${ROS_DISTRO}"
-
-##     && sudo mv  /etc/ros/rosdep/sources.list.d/20-default.list  /etc/ros/rosdep/sources.list.d/21-default.list
-##     && rosdep install --from-paths src --ignore-src -y  \
 
 
 ########################################################################
