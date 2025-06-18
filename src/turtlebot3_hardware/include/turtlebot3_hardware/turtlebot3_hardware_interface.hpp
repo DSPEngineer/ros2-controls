@@ -36,7 +36,7 @@ public:
 
     hardware_interface::return_type read(
         const rclcpp::Time & time, const rclcpp::Duration & period) override;
-    
+
     hardware_interface::return_type write(
         const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
