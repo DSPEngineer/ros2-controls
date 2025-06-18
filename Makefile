@@ -89,12 +89,11 @@ clean-image: ## builds the docker image without the cache
 
 .PHONY: build
 build: image ## build current source in container
-	docker run --rm -t \
+	docker run --rm -t $(DOCKER_RUN_ARGS) \
 		--platform $(PLATFORM) \
-		--volume $(PWD):$(WORKSPACE) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
-		/bin/bash -ic "colcon build"
+		/bin/bash -ic "colcon build && pwd"
 
 .PHONY: clean
 clean: ## remove colcon build artifacts

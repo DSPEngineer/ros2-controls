@@ -71,6 +71,14 @@ RUN colcon mixin add default \
   colcon metadata update
 
 ################################################################################
+## Build and Install Dynamixel SDK 
+WORKDIR /tmp/sdk
+RUN git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git \
+  && cd DynamixelSDK/c++/build/linux64 \
+  && make \
+  && make install
+
+################################################################################
 ## Build and Install plotjuggler, from source
 ##
 RUN  apt update \
@@ -105,7 +113,6 @@ RUN  apt update \
      && apt-get autoremove -y \
      && apt-get clean  \
      && rm -rf /var/lib/apt/lists/*  \
-     && rosdep init && rosdep update  \
      && mkdir -p /opt/plotjuggler/src  \
      && cd /opt/plotjuggler/src  \
      && git clone https://github.com/PlotJuggler/plotjuggler_msgs.git  \
@@ -117,19 +124,19 @@ RUN  apt update \
      && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
      && export ROS_VERSION=2  \
      && export ROS_PYTHON_VERSION=3  \
-     && rosdep install --from-paths src --ignore-src -y  \
      && colcon build \
             --cmake-args \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             -DROS_DISTRO=${ROS_DISTRO} \
             -DROS_VERSION=2 \
             -DCMAKE_PREFIX_PATH="/opt/ros/${ROS_DISTRO}"
+
 ##     && sudo mv  /etc/ros/rosdep/sources.list.d/20-default.list  /etc/ros/rosdep/sources.list.d/21-default.list
 ##     && rosdep install --from-paths src --ignore-src -y  \
 
 
 ########################################################################
-## To install VSCode: (or code-insiders) directly from Microsoft
+## Install VSCode: (or code-insiders) directly from Microsoft
 RUN  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg \
   && install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg \
   && echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" |sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null \
@@ -140,6 +147,8 @@ RUN  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/
 
+
+########################################################################
 # Remove default ubuntu user
 # create non-root user with given username
 # and allow sudo without password
@@ -158,22 +167,16 @@ RUN userdel -r ubuntu \
   && echo "export PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$PATH" >> ${HOME_DIR}/.bashrc \
   && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"                                >> ${HOME_DIR}/.bashrc \
   && echo "source /opt/plotjuggler/install/setup.bash"                              >> ${HOME_DIR}/.bashrc \
-  && echo "source install/setup.bash"                                               >> ${HOME_DIR}/.bashrc \
   && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""                        >> ${HOME_DIR}/.bashrc \
   && echo "[ -n \"\${SETUP}\" ] && source \${SETUP}"                                >> ${HOME_DIR}/.bashrc \
   && echo "source /etc/profile.d/bash_completion.sh"                                >> ${HOME_DIR}/.bashrc \
   && chown -R ${USERNAME}: ${HOME_DIR}
 
+########################################################################
 # create workspace and source dir
 RUN mkdir -p ${WORKSPACE} \
-  && chown -R ${USERNAME}: ${HOME_DIR}
+  && chown  -R  ${USERNAME}:${USERNAME}  ${HOME_DIR}
 WORKDIR ${WORKSPACE}
-
-WORKDIR /tmp/sdk
-RUN git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git \
-  && cd DynamixelSDK/c++/build/linux64 \
-  && make \
-  && make install
 
 # setup dds config
 ADD ./dds_config ${DDS_CONFIG_DIR}
@@ -183,16 +186,17 @@ ADD ./dds_config ${DDS_CONFIG_DIR}
 # copy code into workspace and set ownership to user
 ADD --chown=${USERNAME}:${USERNAME} ./src ${WORKSPACE}/src
 
-
+########################################################################
 # install deps as non-root user
 WORKDIR ${WORKSPACE}
 USER ${USERNAME}
-##  && rosdep install -y -r -i --from-paths ${WORKSPACE}/src \
+
 RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
- && sudo apt-get update \
- && sudo rosdep init \
- && rosdep update --rosdistro ${ROS_DISTRO} \
- && sudo rm -rf /var/lib/apt/lists/*"
+  && sudo apt-get update \
+  && sudo rosdep init \
+  && rosdep update --rosdistro ${ROS_DISTRO} \
+  && rosdep install -y -r -i --from-paths ${WORKSPACE}/src \
+  && sudo rm -rf /var/lib/apt/lists/*"
 
 # by default hold container open in background
 CMD ["tail", "-f", "/dev/null"]
