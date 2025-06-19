@@ -24,7 +24,7 @@ WORLDS_DIR: Final[str] = "worlds"
 
 # Files
 GZ_LAUNCH_FILE: Final[str] = "gz_sim.launch.py"
-WORLD_FILE: Final[str] = "turtlebot3_world.sdf"
+WORLD_FILE: Final[str] = "simple_world.sdf"
 
 # File Paths
 gz_launch_path = os.path.join(
@@ -69,7 +69,7 @@ def generate_launch_description() -> LaunchDescription:
             (
                 "gz_args",
                 [
-                    world_file_path,
+                    "shapes.sdf",
                     " -r",
                 ],
             )
