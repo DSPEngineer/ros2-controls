@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 PACKAGE=ros2-control-workshop-container
-VERSION:=0.1.0
+VERSION:=0.2.0
 PLATFORM=linux/amd64
 # PLATFORM=linux/arm64
 CONTAINER:=ghcr.io/freshrobotics/$(PACKAGE)-$(PLATFORM):$(VERSION)
@@ -93,7 +93,7 @@ build: image ## build current source in container
 		--platform $(PLATFORM) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
-		/bin/bash -ic "colcon build && pwd"
+		/bin/bash -ic "colcon build"
 
 .PHONY: clean
 clean: ## remove colcon build artifacts
