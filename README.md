@@ -36,6 +36,11 @@ ROS Control Workshop with Turtlebot3
     $ ros2 launch  turtlebot3_gz_bringup tb3_gz.launch.py
     ```
 
+4. Drive test
+    ```
+    ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=turtlebot_base_controller/cmd_vel -p stamped:=true
+    ```
+    
 ## TODO:
 
 * Implement turtlebot3_hardware package (ROS2 Control - Hardware Interface)
