@@ -20,7 +20,7 @@ find_package(ament_cmake REQUIRED)
 find_package(ros_gz_interfaces REQUIRED)
 
 install(
-    DIRECTORY launch config
+    DIRECTORY launch config worlds
     DESTINATION share/${PROJECT_NAME}
 )
 
