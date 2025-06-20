@@ -131,7 +131,6 @@ RUN  apt update \
      && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
      && export ROS_VERSION=2  \
      && export ROS_PYTHON_VERSION=3  \
-     && rosdep install --from-paths src --ignore-src -y  \
      && colcon build \
             --cmake-args \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo \

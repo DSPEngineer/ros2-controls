@@ -16,22 +16,16 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 # Packages
 ROS_GZ_PKG: Final[str] = "ros_gz_sim"
 TB3_DESCRIPTION_PKG: Final[str] = "turtlebot3_description"
-TB3_GZ_BRINGUP_PKG: Final[str] = "turtlebot3_gz_bringup"
 
 # Directories
 LAUNCH_DIR: Final[str] = "launch"
-WORLDS_DIR: Final[str] = "worlds"
 
 # Files
 GZ_LAUNCH_FILE: Final[str] = "gz_sim.launch.py"
-WORLD_FILE: Final[str] = "simple_world.sdf"
 
 # File Paths
 gz_launch_path = os.path.join(
     get_package_share_directory(ROS_GZ_PKG), LAUNCH_DIR, GZ_LAUNCH_FILE
-)
-world_file_path = os.path.join(
-    get_package_share_directory(TB3_GZ_BRINGUP_PKG), WORLDS_DIR, WORLD_FILE
 )
 
 # Launch Arguments
@@ -69,7 +63,7 @@ def generate_launch_description() -> LaunchDescription:
             (
                 "gz_args",
                 [
-                    "shapes.sdf",
+                    "empty.sdf",
                     " -r",
                 ],
             )
