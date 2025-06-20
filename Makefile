@@ -42,7 +42,7 @@ version: ## print the package version
 
 .PHONY: run
 run: ## start container with shell
-	@xauth +local:*
+	@xhost +local:*
 	@docker run $(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
