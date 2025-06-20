@@ -13,7 +13,7 @@ RUN_AS_GID=$(shell id -g)
 RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 # RMW_IMPLEMENTATION="rmw_fastrtps_cpp"
 
-DOCKER_RUN_ARGS=--rm -it \
+DOCKER_RUN_ARGS=--rm -t \
 		--platform $(PLATFORM) \
 		--network host \
 		--privileged \
@@ -28,7 +28,6 @@ DOCKER_RUN_ARGS=--rm -it \
 		--volume ${HOME}/.config:$(USR_HOME)/.config \
 		--volume ${HOME}/.local:$(USR_HOME)/.local \
 		--volume ${HOME}/.ssh:$(USR_HOME)/.ssh \
-		--volume ${HOME}/.Xauthority:$(USR_HOME)/.Xauthority \
 		--volume /dev:/dev:rw \
 		--volume $(PWD):$(WORKSPACE)
 
@@ -42,14 +41,15 @@ version: ## print the package version
 
 .PHONY: run
 run: ## start container with shell
-	@docker run $(DOCKER_RUN_ARGS) \
+	xhost +local:*
+	@docker run -i $(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
 		/bin/bash -i
 
 .PHONY: run-gpu
 run-gpu: ## start container with GPU with shell
-	@docker run $(DOCKER_RUN_ARGS) \
+	@docker run -i $(DOCKER_RUN_ARGS) \
 		--runtime=nvidia \
 		--env NVIDIA_VISIBLE_DEVICES=nvidia.com/gpu=all \
 		--env NVIDIA_DRIVER_CAPABILITIES=all \
@@ -89,7 +89,7 @@ clean-image: ## builds the docker image without the cache
 
 .PHONY: build
 build: image ## build current source in container
-	docker run --rm -t $(DOCKER_RUN_ARGS) \
+	docker run $(DOCKER_RUN_ARGS) \
 		--platform $(PLATFORM) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
@@ -101,14 +101,14 @@ clean: ## remove colcon build artifacts
 
 .PHONY: talker-demo
 talker-demo: ## run demo talker node
-	docker run $(DOCKER_RUN_ARGS) \
+	docker run -i $(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE)-talker \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp talker"
 
 .PHONY: listener-demo
 listener-demo: ## run demo listener node
-	docker run $(DOCKER_RUN_ARGS) \
+	docker run -i $(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE)-listener \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp listener"

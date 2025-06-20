@@ -25,7 +25,6 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
   && apt-get update && apt-get install -q -y --no-install-recommends \
     bash-completion \
-    black \
     build-essential \
     curl \
     dirmngr \
@@ -43,6 +42,7 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
     usbutils \
     wget \
     x11-apps \
+    xauth \
   && add-apt-repository universe \
   && rm -rf /var/lib/apt/lists/*
 
@@ -131,6 +131,7 @@ RUN  apt update \
      && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
      && export ROS_VERSION=2  \
      && export ROS_PYTHON_VERSION=3  \
+     && rosdep install --from-paths src --ignore-src -y  \
      && colcon build \
             --cmake-args \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo \
@@ -169,12 +170,14 @@ RUN userdel -r ubuntu \
   && passwd -d ${USERNAME} \
   && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
   && chmod 0440 /etc/sudoers.d/${USERNAME} \
-  && echo "export PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$PATH" >> ${HOME_DIR}/.bashrc \
-  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"                                >> ${HOME_DIR}/.bashrc \
-  && echo "source /opt/plotjuggler/install/setup.bash"                              >> ${HOME_DIR}/.bashrc \
-  && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""                        >> ${HOME_DIR}/.bashrc \
-  && echo "[ -n \"\${SETUP}\" ] && source \${SETUP}"                                >> ${HOME_DIR}/.bashrc \
-  && echo "source /etc/profile.d/bash_completion.sh"                                >> ${HOME_DIR}/.bashrc \
+  && sed -i s/"\${debian_chroot:+(\$debian_chroot)}"/"docker-\${debian_chroot:+(\$debian_chroot)}"/g    ${HOME_DIR}/.bashrc \
+  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"           >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/plotjuggler/install/setup.bash"         >> ${HOME_DIR}/.bashrc \
+  && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""   >> ${HOME_DIR}/.bashrc \
+  && echo "[[ -n \"\${SETUP}\" ]] && source \${SETUP}"         >> ${HOME_DIR}/.bashrc \
+  && echo "export PATH=\$PATH:/opt/plotjuggler/install/plotjuggler/lib/plotjuggler" >> ${HOME_DIR}/.bashrc \
+  && echo "[[ \$LD_LIBRARY_PATH != */usr/local/lib* ]] && export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib"  >> ${HOME_DIR}/.bashrc \
+  && echo "[[ \$LD_LIBRARY_PATH != */opt/plotjuggler/install/plotjuggler/lib/plotjuggler* ]] && export LD_LIBRARY_PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$LD_LIBRARY_PATH"  >> ${HOME_DIR}/.bashrc \
   && chown -R ${USERNAME}: ${HOME_DIR}
 
 ########################################################################
