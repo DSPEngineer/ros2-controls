@@ -11,12 +11,14 @@ ROS Control Workshop with Turtlebot3
 ## Usage
 1. Clone the repo and build the image.
 
+    NOTE: the docker image includes ROS2, ROS2-Controls, and various tools to aid in software development and data visualization.
+
     ```
     $ git clone git@bitbucket.org:awp-controls/ros2-control-workshop-container.git
     $ cd ros2control-workshop-container
     $ make image
     ```
-2. Build the source(s):
+    2. Build the source(s):
 
     2.a. Auto Build all sources using the docker conainer: 
     ```
@@ -64,8 +66,9 @@ ROS Control Workshop with Turtlebot3
 ----
 # TOOLS
 
-There are several tools added to the DOcker image, created for this repository. These include;
+There are several tools included in the Docker image, created for this repository. These include;
 
+  - Visual Studio Code
   - Gazebo
   - PlotJuggler
   - rqt
