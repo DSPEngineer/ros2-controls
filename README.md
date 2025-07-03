@@ -56,12 +56,22 @@ ROS Control Workshop with Turtlebot3
     $ make shell
 
     // inside the container, start the Drive Test:
-    $ ros2 run  teleop_twist_keyboard  teleop_twist_keyboard 
-        --ros-args 
-          -r cmd_vel:=turtlebot_base_controller/cmd_vel
+    $ ros2 run  teleop_twist_keyboard  teleop_twist_keyboard \
+        --ros-args \
+          -r cmd_vel:=turtlebot_base_controller/cmd_vel \
           -p stamped:=true
     ```
-    
+----
+# TOOLS
+
+There are several tools added to the DOcker image, created for this repository. These include;
+
+  - Gazebo
+  - PlotJuggler
+  - rqt
+  - TurtleSim
+
+----
 ## TODO:
 
 * Implement turtlebot3_hardware package (ROS2 Control - Hardware Interface)
