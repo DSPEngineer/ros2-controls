@@ -16,8 +16,15 @@ ROS Control Workshop with Turtlebot3
     $ cd ros2control-workshop-container
     $ make image
     ```
+2. Build the source(s):
 
-2. Run the container with src directory mounted, build and source ROS packages.
+    2.a. Auto Build all sources using the docker conainer: 
+    ```
+    $ cd ros2control-workshop-container
+    $ make build
+    ```
+
+    2.b. Manual build; run the container with src directory mounted, build and source ROS packages.
 
     ```
     # With nvidia GPU
@@ -39,7 +46,7 @@ ROS Control Workshop with Turtlebot3
     $ make run-gpu
 
     // inside the container, start the Gazebo simulation:
-    $ ros2 launch  turtlebot3_gz_bringup tb3_gz.launch.py
+    $ ros2 launch  turtlebot3_gz_bringup  tb3_gz.launch.py
     ```
 
 4. Drive test
@@ -49,7 +56,10 @@ ROS Control Workshop with Turtlebot3
     $ make shell
 
     // inside the container, start the Drive Test:
-    ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=turtlebot_base_controller/cmd_vel -p stamped:=true
+    $ ros2 run  teleop_twist_keyboard  teleop_twist_keyboard 
+        --ros-args 
+          -r cmd_vel:=turtlebot_base_controller/cmd_vel
+          -p stamped:=true
     ```
     
 ## TODO:
