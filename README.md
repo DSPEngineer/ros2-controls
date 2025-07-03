@@ -32,12 +32,23 @@ ROS Control Workshop with Turtlebot3
 
 3. Launch the simulation
 
+    NOTE: you need to open a new terminal window and **start** the container:
     ```
+    $ make run
+        ~or~
+    $ make run-gpu
+
+    // inside the container, start the Gazebo simulation:
     $ ros2 launch  turtlebot3_gz_bringup tb3_gz.launch.py
     ```
 
 4. Drive test
+
+    NOTE: you need to open a new terminal window and **shell into** your running container:
     ```
+    $ make shell
+
+    // inside the container, start the Drive Test:
     ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=turtlebot_base_controller/cmd_vel -p stamped:=true
     ```
     
