@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 PACKAGE=ros2-control-workshop-container
-VERSION:=0.1.0
+VERSION:=0.2.0
 PLATFORM=linux/amd64
 # PLATFORM=linux/arm64
 CONTAINER:=ghcr.io/freshrobotics/$(PACKAGE)-$(PLATFORM):$(VERSION)
@@ -42,7 +42,8 @@ version: ## print the package version
 .PHONY: run
 run: ## start container with shell
 	xhost +local:*
-	@docker run -i $(DOCKER_RUN_ARGS) \
+	@docker run \
+		-i $(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
 		/bin/bash -i

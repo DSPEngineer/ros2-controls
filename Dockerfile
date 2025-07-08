@@ -63,7 +63,12 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
     ros-${ROS_DISTRO}-desktop \
+    ros-${ROS_DISTRO}-joint-state-publisher \
+    ros-${ROS_DISTRO}-joint-state-publisher-gui \
+    ros-${ROS_DISTRO}-xacro \
     ros-${ROS_DISTRO}-ros-gz \
+    ros-${ROS_DISTRO}-ros2-control \
+    ros-${ROS_DISTRO}-ros2-controllers \
   && rm -rf /var/lib/apt/lists/*
 
 
@@ -170,13 +175,13 @@ RUN userdel -r ubuntu \
   && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
   && chmod 0440 /etc/sudoers.d/${USERNAME} \
   && sed -i s/"\${debian_chroot:+(\$debian_chroot)}"/"docker-\${debian_chroot:+(\$debian_chroot)}"/g    ${HOME_DIR}/.bashrc \
-  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"           >> ${HOME_DIR}/.bashrc \
-  && echo "source /opt/plotjuggler/install/setup.bash"         >> ${HOME_DIR}/.bashrc \
-  && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""   >> ${HOME_DIR}/.bashrc \
-  && echo "[[ -n \"\${SETUP}\" ]] && source \${SETUP}"         >> ${HOME_DIR}/.bashrc \
-  && echo "export PATH=\$PATH:/opt/plotjuggler/install/plotjuggler/lib/plotjuggler" >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"               >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/plotjuggler/install/setup.bash"             >> ${HOME_DIR}/.bashrc \
+  && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""       >> ${HOME_DIR}/.bashrc \
+  && echo "[[ -n \"\${SETUP}\" ]] && source \${SETUP}"             >> ${HOME_DIR}/.bashrc \
   && echo "[[ \$LD_LIBRARY_PATH != */usr/local/lib* ]] && export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib"  >> ${HOME_DIR}/.bashrc \
   && echo "[[ \$LD_LIBRARY_PATH != */opt/plotjuggler/install/plotjuggler/lib/plotjuggler* ]] && export LD_LIBRARY_PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$LD_LIBRARY_PATH"  >> ${HOME_DIR}/.bashrc \
+  && echo "[[ \$PATH != */opt/plotjuggler/install/plotjuggler/lib/plotjuggler* ]] && export PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$PATH"   >> ${HOME_DIR}/.bashrc \
   && chown -R ${USERNAME}: ${HOME_DIR}
 
 ########################################################################
