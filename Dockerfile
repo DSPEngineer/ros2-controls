@@ -24,26 +24,26 @@ ENV RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
   && apt-get update && apt-get install -q -y --no-install-recommends \
-    bash-completion \
-    black \
-    build-essential \
-    curl \
-    dirmngr \
-    emacs \
-    git \
-    gnupg2 \
-    iproute2 \
-    net-tools \
-    ssh \
-    python-is-python3 \
-    python3-pip \
-    software-properties-common \
-    sudo \
-    tzdata \
-    usbutils \
-    wget \
-    x11-apps \
-    xauth \
+         bash-completion \
+         black \
+         build-essential \
+         curl \
+         dirmngr \
+         emacs \
+         git \
+         gnupg2 \
+         iproute2 \
+         net-tools \
+         ssh \
+         python-is-python3 \
+         python3-pip \
+         software-properties-common \
+         sudo \
+         tzdata \
+         usbutils \
+         wget \
+         x11-apps \
+         xauth \
   && add-apt-repository universe \
   && rm -rf /var/lib/apt/lists/*
 
@@ -56,20 +56,20 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
     http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
     | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null \
   && apt-get update && apt-get install -q -y --no-install-recommends \
-    python3-colcon-common-extensions \
-    python3-colcon-mixin \
-    python3-debugpy \
-    python3-rosdep \
-    python3-vcstool \
-    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
-    ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
-    ros-${ROS_DISTRO}-desktop \
-    ros-${ROS_DISTRO}-joint-state-publisher \
-    ros-${ROS_DISTRO}-joint-state-publisher-gui \
-    ros-${ROS_DISTRO}-xacro \
-    ros-${ROS_DISTRO}-ros-gz \
-    ros-${ROS_DISTRO}-ros2-control \
-    ros-${ROS_DISTRO}-ros2-controllers \
+         python3-colcon-common-extensions \
+         python3-colcon-mixin \
+         python3-debugpy \
+         python3-rosdep \
+         python3-vcstool \
+         ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+         ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
+         ros-${ROS_DISTRO}-desktop \
+         ros-${ROS_DISTRO}-joint-state-publisher \
+         ros-${ROS_DISTRO}-joint-state-publisher-gui \
+         ros-${ROS_DISTRO}-xacro \
+         ros-${ROS_DISTRO}-ros-gz \
+         ros-${ROS_DISTRO}-ros2-control \
+         ros-${ROS_DISTRO}-ros2-controllers \
   && rm -rf /var/lib/apt/lists/*
 
 
