@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 PACKAGE=ros2-control-workshop-container
-VERSION:=0.2.0
+VERSION:=0.3.0
 PLATFORM=linux/amd64
 # PLATFORM=linux/arm64
 CONTAINER:=ghcr.io/freshrobotics/$(PACKAGE)-$(PLATFORM):$(VERSION)
@@ -43,14 +43,16 @@ version: ## print the package version
 .PHONY: run
 run: ## start container with shell
 	@xhost +local:*
-	@docker run $(DOCKER_RUN_ARGS) \
+	@docker run -i \
+		$(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
 		/bin/bash -i
 
 .PHONY: run-gpu
 run-gpu: ## start container with GPU with shell
-	@docker run $(DOCKER_RUN_ARGS) \
+	@docker run -i \
+		$(DOCKER_RUN_ARGS) \
 		--runtime=nvidia \
 		--env NVIDIA_VISIBLE_DEVICES=nvidia.com/gpu=all \
 		--env NVIDIA_DRIVER_CAPABILITIES=all \
@@ -89,8 +91,8 @@ clean-image: ## builds the docker image without the cache
 		.
 
 .PHONY: build
-build: image ## build current source in container
-	docker run --rm -t $(DOCKER_RUN_ARGS) \
+build: ## build current source in container
+	docker run $(DOCKER_RUN_ARGS) \
 		--platform $(PLATFORM) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
@@ -102,14 +104,16 @@ clean: ## remove colcon build artifacts
 
 .PHONY: talker-demo
 talker-demo: ## run demo talker node
-	docker run $(DOCKER_RUN_ARGS) \
+	docker run -i \
+		$(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE)-talker \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp talker"
 
 .PHONY: listener-demo
 listener-demo: ## run demo listener node
-	docker run $(DOCKER_RUN_ARGS) \
+	docker run -i \
+		$(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE)-listener \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp listener"
