@@ -24,62 +24,67 @@ ENV RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
   && apt-get update && apt-get install -q -y --no-install-recommends \
-    bash-completion \
-    build-essential \
-    curl \
-    dirmngr \
-    emacs \
-    git \
-    gnupg2 \
-    iproute2 \
-    net-tools \
-    ssh \
-    python-is-python3 \
-    python3-pip \
-    software-properties-common \
-    sudo \
-    tzdata \
-    usbutils \
-    wget \
-    x11-apps \
-    xauth \
+         bash-completion \
+         black \
+         build-essential \
+         curl \
+         dirmngr \
+         emacs \
+         git \
+         gnupg2 \
+         iproute2 \
+         net-tools \
+         ssh \
+         python-is-python3 \
+         python3-pip \
+         software-properties-common \
+         sudo \
+         tzdata \
+         usbutils \
+         wget \
+         x11-apps \
+         xauth \
   && add-apt-repository universe \
+  && apt-get autoremove -y \
+  && apt-get clean  \
   && rm -rf /var/lib/apt/lists/*
 
 
 ################################################################################
 # setup ros package overlay & install ros packages
 RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-    -o /usr/share/keyrings/ros-archive-keyring.gpg \
+         -o /usr/share/keyrings/ros-archive-keyring.gpg \
   && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
-    http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
-    | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null \
+           http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
+       | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null \
   && apt-get update && apt-get install -q -y --no-install-recommends \
-    python3-colcon-common-extensions \
-    python3-colcon-mixin \
-    python3-debugpy \
-    python3-rosdep \
-    python3-vcstool \
-    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
-    ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
-    ros-${ROS_DISTRO}-desktop \
-    ros-${ROS_DISTRO}-joint-state-publisher \
-    ros-${ROS_DISTRO}-joint-state-publisher-gui \
-    ros-${ROS_DISTRO}-xacro \
-    ros-${ROS_DISTRO}-ros-gz \
-    ros-${ROS_DISTRO}-ros2-control \
-    ros-${ROS_DISTRO}-ros2-controllers \
+         python3-colcon-common-extensions \
+         python3-colcon-mixin \
+         python3-debugpy \
+         python3-rosdep \
+         python3-vcstool \
+         ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+         ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
+         ros-${ROS_DISTRO}-desktop \
+         ros-${ROS_DISTRO}-joint-state-publisher \
+         ros-${ROS_DISTRO}-joint-state-publisher-gui \
+         ros-${ROS_DISTRO}-xacro \
+         ros-${ROS_DISTRO}-ros-gz \
+         ros-${ROS_DISTRO}-ros2-control \
+         ros-${ROS_DISTRO}-ros2-controllers \
+  && apt-get autoremove -y \
+  && apt-get clean  \
   && rm -rf /var/lib/apt/lists/*
 
 
 ################################################################################
 # setup colcon mixin and metadata
-RUN colcon mixin add default \
-    https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml && \
-  colcon mixin update default && \
-  colcon metadata add default \
-    https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml && \
-  colcon metadata update
+RUN  colcon mixin add default \
+       https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml \
+  && colcon mixin update default \
+  && colcon metadata add default \
+       https://raw.githubusercontent.com/colcon/colcon-metadata-repository/master/index.yaml \
+  && colcon metadata update
 
 
 ################################################################################
@@ -92,6 +97,9 @@ RUN git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git \
 
 ################################################################################
 ## Build and Install plotjuggler, from source
+
+##
+## Install required packages:
 ##
 RUN  apt update \
   && apt install -y -q \
@@ -122,21 +130,26 @@ RUN  apt update \
                  ros-${ROS_DISTRO}-rclcpp-components \
                  ros-${ROS_DISTRO}-rosidl-default-generators \
                  ros-${ROS_DISTRO}-rosidl-default-runtime \
-     && apt-get autoremove -y \
-     && apt-get clean  \
-     && rm -rf /var/lib/apt/lists/*  \
-     && mkdir -p /opt/plotjuggler/src  \
-     && cd /opt/plotjuggler/src  \
-     && git clone https://github.com/PlotJuggler/plotjuggler_msgs.git  \
-     && git clone https://github.com/facontidavide/PlotJuggler.git  \
-     && git clone https://github.com/PlotJuggler/plotjuggler-ros-plugins.git  \
-     && cd /opt/plotjuggler  \
-     && . /opt/ros/${ROS_DISTRO}/setup.sh  \
-     && export AMENT_PREFIX_PATH=/opt/ros/${ROS_DISTRO}  \
-     && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
-     && export ROS_VERSION=2  \
-     && export ROS_PYTHON_VERSION=3  \
-     && colcon build \
+  && apt-get autoremove -y \
+  && apt-get clean  \
+  && rm -rf /var/lib/apt/lists/*
+
+  ##
+  ## Build PlotJuggler, from source:
+  ##     https://docs.ros.org/en/jazzy/p/plotjuggler_ros/
+  ##
+RUN  mkdir -p /opt/plotjuggler/src  \
+  && cd /opt/plotjuggler/src  \
+  && git clone --branch 0.2.3  https://github.com/PlotJuggler/plotjuggler_msgs.git  \
+  && git clone --branch 3.10.9 https://github.com/facontidavide/PlotJuggler.git  \
+  && git clone --branch 2.3.1  https://github.com/PlotJuggler/plotjuggler-ros-plugins.git  \
+  && cd /opt/plotjuggler  \
+  && . /opt/ros/${ROS_DISTRO}/setup.sh  \
+  && export AMENT_PREFIX_PATH=/opt/ros/${ROS_DISTRO}  \
+  && export CMAKE_PREFIX_PATH=/opt/ros/${ROS_DISTRO} \
+  && export ROS_VERSION=2  \
+  && export ROS_PYTHON_VERSION=3  \
+  && colcon build \
             --cmake-args \
             -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             -DROS_DISTRO=${ROS_DISTRO} \
@@ -174,11 +187,10 @@ RUN userdel -r ubuntu \
   && passwd -d ${USERNAME} \
   && echo "${USERNAME} ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} \
   && chmod 0440 /etc/sudoers.d/${USERNAME} \
-  && sed -i s/"\${debian_chroot:+(\$debian_chroot)}"/"docker-\${debian_chroot:+(\$debian_chroot)}"/g    ${HOME_DIR}/.bashrc \
-  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"               >> ${HOME_DIR}/.bashrc \
-  && echo "source /opt/plotjuggler/install/setup.bash"             >> ${HOME_DIR}/.bashrc \
-  && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""       >> ${HOME_DIR}/.bashrc \
-  && echo "[[ -n \"\${SETUP}\" ]] && source \${SETUP}"             >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/ros/${ROS_DISTRO}/setup.bash"                                >> ${HOME_DIR}/.bashrc \
+  && echo "source /opt/plotjuggler/install/setup.bash"                              >> ${HOME_DIR}/.bashrc \
+  && echo "SETUP=\"\$(find ${WORKSPACE} -name setup.bash)\""                        >> ${HOME_DIR}/.bashrc \
+  && echo "[ -n \"\${SETUP}\" ] && source \${SETUP}"                                >> ${HOME_DIR}/.bashrc \
   && echo "[[ \$LD_LIBRARY_PATH != */usr/local/lib* ]] && export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/lib"  >> ${HOME_DIR}/.bashrc \
   && echo "[[ \$LD_LIBRARY_PATH != */opt/plotjuggler/install/plotjuggler/lib/plotjuggler* ]] && export LD_LIBRARY_PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$LD_LIBRARY_PATH"  >> ${HOME_DIR}/.bashrc \
   && echo "[[ \$PATH != */opt/plotjuggler/install/plotjuggler/lib/plotjuggler* ]] && export PATH=/opt/plotjuggler/install/plotjuggler/lib/plotjuggler:\$PATH"   >> ${HOME_DIR}/.bashrc \

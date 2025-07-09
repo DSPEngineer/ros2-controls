@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 PACKAGE=ros2-control-workshop-container
-VERSION:=0.2.0
+VERSION:=0.3.0
 PLATFORM=linux/amd64
 # PLATFORM=linux/arm64
 CONTAINER:=ghcr.io/freshrobotics/$(PACKAGE)-$(PLATFORM):$(VERSION)
@@ -41,9 +41,9 @@ version: ## print the package version
 
 .PHONY: run
 run: ## start container with shell
-	xhost +local:*
-	@docker run \
-		-i $(DOCKER_RUN_ARGS) \
+	@xhost +local:*
+	@docker run -i \
+		$(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
 		/bin/bash -i
@@ -102,14 +102,16 @@ clean: ## remove colcon build artifacts
 
 .PHONY: talker-demo
 talker-demo: ## run demo talker node
-	docker run -i $(DOCKER_RUN_ARGS) \
+	docker run -i \
+		$(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE)-talker \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp talker"
 
 .PHONY: listener-demo
 listener-demo: ## run demo listener node
-	docker run -i $(DOCKER_RUN_ARGS) \
+	docker run -i \
+		$(DOCKER_RUN_ARGS) \
 		--name $(PACKAGE)-listener \
 		$(CONTAINER) \
 		/bin/bash -ic "ros2 run demo_nodes_cpp listener"
