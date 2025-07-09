@@ -60,8 +60,8 @@ ROS Control Workshop with Turtlebot3
     // inside the container, start the Drive Test:
     $ ros2 run  teleop_twist_keyboard  teleop_twist_keyboard \
         --ros-args \
-          -r cmd_vel:=turtlebot_base_controller/cmd_vel \
-          -p stamped:=true
+        -r cmd_vel:=turtlebot_base_controller/cmd_vel \
+        -p stamped:=true
     ```
 ----
 # TOOLS
