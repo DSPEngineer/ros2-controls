@@ -34,10 +34,10 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
          gnupg2 \
          iproute2 \
          net-tools \
-         ssh \
          python-is-python3 \
          python3-pip \
          software-properties-common \
+         ssh \
          sudo \
          tzdata \
          usbutils \
@@ -68,10 +68,10 @@ RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
          ros-${ROS_DISTRO}-desktop \
          ros-${ROS_DISTRO}-joint-state-publisher \
          ros-${ROS_DISTRO}-joint-state-publisher-gui \
-         ros-${ROS_DISTRO}-xacro \
          ros-${ROS_DISTRO}-ros-gz \
          ros-${ROS_DISTRO}-ros2-control \
          ros-${ROS_DISTRO}-ros2-controllers \
+         ros-${ROS_DISTRO}-xacro \
   && apt-get autoremove -y \
   && apt-get clean  \
   && rm -rf /var/lib/apt/lists/*
@@ -103,33 +103,33 @@ RUN git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git \
 ##
 RUN  apt update \
   && apt install -y -q \
-                 binutils-dev \
-                 cmake \
-                 protobuf-compiler \
-                 liblua5.1-0-dev \
-                 libmosquittopp-dev \
-                 liblz4-dev \
-                 libprotoc-dev \
-                 libzmq3-dev \
-                 libqt5opengl5-dev \
-                 libqt5svg5-dev \
-                 libqt5websockets5-dev \
-                 libqt5x11extras5-dev \
-                 libzstd-dev \
-                 nlohmann-json3-dev \
-		 qtbase5-dev \
-                 ros-${ROS_DISTRO}-ament-cmake \
-                 ros-${ROS_DISTRO}-ament-cmake-core \
-                 ros-${ROS_DISTRO}-ament-cmake-export-dependencies \
-                 ros-${ROS_DISTRO}-ament-cmake-libraries \
-                 ros-${ROS_DISTRO}-ament-cmake-python  \
-                 ros-${ROS_DISTRO}-ament-cmake-ros \
-                 ros-${ROS_DISTRO}-ament-cmake-target-dependencies \
-                 ros-${ROS_DISTRO}-ament-package \
-                 ros-${ROS_DISTRO}-rclcpp \
-                 ros-${ROS_DISTRO}-rclcpp-components \
-                 ros-${ROS_DISTRO}-rosidl-default-generators \
-                 ros-${ROS_DISTRO}-rosidl-default-runtime \
+             binutils-dev \
+             cmake \
+             protobuf-compiler \
+             liblua5.1-0-dev \
+             libmosquittopp-dev \
+             liblz4-dev \
+             libprotoc-dev \
+             libzmq3-dev \
+             libqt5opengl5-dev \
+             libqt5svg5-dev \
+             libqt5websockets5-dev \
+             libqt5x11extras5-dev \
+             libzstd-dev \
+             nlohmann-json3-dev \
+             qtbase5-dev \
+             ros-${ROS_DISTRO}-ament-cmake \
+             ros-${ROS_DISTRO}-ament-cmake-core \
+             ros-${ROS_DISTRO}-ament-cmake-export-dependencies \
+             ros-${ROS_DISTRO}-ament-cmake-libraries \
+             ros-${ROS_DISTRO}-ament-cmake-python  \
+             ros-${ROS_DISTRO}-ament-cmake-ros \
+             ros-${ROS_DISTRO}-ament-cmake-target-dependencies \
+             ros-${ROS_DISTRO}-ament-package \
+             ros-${ROS_DISTRO}-rclcpp \
+             ros-${ROS_DISTRO}-rclcpp-components \
+             ros-${ROS_DISTRO}-rosidl-default-generators \
+             ros-${ROS_DISTRO}-rosidl-default-runtime \
   && apt-get autoremove -y \
   && apt-get clean  \
   && rm -rf /var/lib/apt/lists/*

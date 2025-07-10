@@ -13,7 +13,7 @@ RUN_AS_GID=$(shell id -g)
 RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 # RMW_IMPLEMENTATION="rmw_fastrtps_cpp"
 
-DOCKER_RUN_ARGS=--rm -it \
+DOCKER_RUN_ARGS=--rm -t \
 		--platform $(PLATFORM) \
 		--network host \
 		--privileged \
@@ -92,7 +92,8 @@ clean-image: ## builds the docker image without the cache
 
 .PHONY: build
 build: ## build current source in container
-	docker run $(DOCKER_RUN_ARGS) \
+	docker run \
+		$(DOCKER_RUN_ARGS) \
 		--platform $(PLATFORM) \
 		--name $(PACKAGE) \
 		$(CONTAINER) \
