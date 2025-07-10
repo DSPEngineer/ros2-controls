@@ -33,6 +33,7 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
          git \
          gnupg2 \
          iproute2 \
+         lsb-release \
          net-tools \
          python-is-python3 \
          python3-pip \
@@ -73,6 +74,7 @@ RUN  curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
 #
 RUN  apt-get update \
   && apt-get install -q -y --no-install-recommends \
+         python3-colcon-argcomplete \
          python3-colcon-common-extensions \
          python3-colcon-mixin \
          python3-debugpy \
