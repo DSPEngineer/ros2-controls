@@ -52,12 +52,27 @@ RUN echo 'Etc/UTC' > /etc/timezone  \
 
 ################################################################################
 # setup ros package overlay & install ros packages
-RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
-         -o /usr/share/keyrings/ros-archive-keyring.gpg \
+#####
+# Gazebo Keys
+#
+RUN  curl -sSl https://packages.osrfoundation.org/gazebo.gpg \
+          -o /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] \
+           http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" \
+       | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null
+#####
+# ROS2 Keys
+#
+RUN  curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+          -o /usr/share/keyrings/ros-archive-keyring.gpg \
   && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \
            http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
-       | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null \
-  && apt-get update && apt-get install -q -y --no-install-recommends \
+       | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+#####
+# ROS2 Packages
+#
+RUN  apt-get update \
+  && apt-get install -q -y --no-install-recommends \
          python3-colcon-common-extensions \
          python3-colcon-mixin \
          python3-debugpy \
