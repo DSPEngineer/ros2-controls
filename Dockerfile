@@ -23,7 +23,7 @@ ENV RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 # setup utc timeszone & install base ubuntu packages
 RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
-  && apt-get update && apt-get upgrade \
+  && apt-get update \
   && apt-get install -q -y --no-install-recommends \
          bash-completion \
          black \
@@ -73,7 +73,7 @@ RUN  curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
 #####
 # Install ROS2
 #
-RUN  apt update && apt upgrade \
+RUN  apt update && apt upgrade -y \
   && apt install -q -y --no-install-recommends \
          python3-colcon-argcomplete \
          python3-colcon-common-extensions \
@@ -95,7 +95,7 @@ RUN  apt update && apt upgrade \
 #         ros-${ROS_DISTRO}-joint-state-publisher \
 #         ros-${ROS_DISTRO}-joint-state-publisher-gui \
 #
-RUN  apt update && apt upgrade \
+RUN  apt update \
   && apt install -q -y --no-install-recommends \
          ros-${ROS_DISTRO}-robot-state-publisher \
          ros-${ROS_DISTRO}-rviz2 \
