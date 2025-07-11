@@ -23,7 +23,8 @@ ENV RMW_IMPLEMENTATION="rmw_cyclonedds_cpp"
 # setup utc timeszone & install base ubuntu packages
 RUN echo 'Etc/UTC' > /etc/timezone  \
   && ln -s /usr/share/zoneinfo/Etc/UTC /etc/localtime \
-  && apt-get update && apt-get install -q -y --no-install-recommends \
+  && apt-get update && apt-get upgrade \
+  && apt-get install -q -y --no-install-recommends \
          bash-completion \
          black \
          build-essential \
@@ -70,10 +71,10 @@ RUN  curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
            http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" \
        | tee /etc/apt/sources.list.d/ros2.list > /dev/null
 #####
-# ROS2 Packages
+# Install ROS2
 #
-RUN  apt-get update \
-  && apt-get install -q -y --no-install-recommends \
+RUN  apt update && apt upgrade \
+  && apt install -q -y --no-install-recommends \
          python3-colcon-argcomplete \
          python3-colcon-common-extensions \
          python3-colcon-mixin \
@@ -83,14 +84,28 @@ RUN  apt-get update \
          ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
          ros-${ROS_DISTRO}-rmw-fastrtps-cpp \
          ros-${ROS_DISTRO}-desktop \
-         ros-${ROS_DISTRO}-joint-state-publisher \
-         ros-${ROS_DISTRO}-joint-state-publisher-gui \
-         ros-${ROS_DISTRO}-ros-gz \
+  && apt autoremove -y \
+  && apt clean  \
+  && rm -rf /var/lib/apt/lists/*
+
+#####
+# ROS2 Packages
+#
+#
+#         ros-${ROS_DISTRO}-joint-state-publisher \
+#         ros-${ROS_DISTRO}-joint-state-publisher-gui \
+#
+RUN  apt update && apt upgrade \
+  && apt install -q -y --no-install-recommends \
+         ros-${ROS_DISTRO}-robot-state-publisher \
+         ros-${ROS_DISTRO}-rviz2 \
+         ros-${ROS_DISTRO}-xacro \
          ros-${ROS_DISTRO}-ros2-control \
          ros-${ROS_DISTRO}-ros2-controllers \
-         ros-${ROS_DISTRO}-xacro \
-  && apt-get autoremove -y \
-  && apt-get clean  \
+         ros-${ROS_DISTRO}-gz-ros2-control \
+         ros-${ROS_DISTRO}-gz-ros2-control-demos \
+  && apt autoremove -y \
+  && apt clean  \
   && rm -rf /var/lib/apt/lists/*
 
 
@@ -114,7 +129,6 @@ RUN git clone https://github.com/ROBOTIS-GIT/DynamixelSDK.git \
 
 ################################################################################
 ## Build and Install plotjuggler, from source
-
 ##
 ## Install required packages:
 ##
@@ -147,8 +161,8 @@ RUN  apt update \
              ros-${ROS_DISTRO}-rclcpp-components \
              ros-${ROS_DISTRO}-rosidl-default-generators \
              ros-${ROS_DISTRO}-rosidl-default-runtime \
-  && apt-get autoremove -y \
-  && apt-get clean  \
+  && apt autoremove -y \
+  && apt clean  \
   && rm -rf /var/lib/apt/lists/*
 
   ##
@@ -182,8 +196,8 @@ RUN  wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor
   && rm -f packages.microsoft.gpg \
   && apt update \
   && apt install code -q -y \
-  && apt-get autoremove -y \
-  && apt-get clean \
+  && apt autoremove -y \
+  && apt clean \
   && rm -rf /var/lib/apt/lists/
 
 
@@ -233,7 +247,7 @@ WORKDIR ${WORKSPACE}
 USER ${USERNAME}
 
 RUN /bin/bash -c "source /opt/ros/${ROS_DISTRO}/setup.bash \
-  && sudo apt-get update \
+  && sudo apt update \
   && sudo rosdep init \
   && rosdep update --rosdistro ${ROS_DISTRO} \
   && rosdep install -y -r -i --from-paths ${WORKSPACE}/src \
