@@ -1,7 +1,7 @@
 SHELL := /bin/bash
 
 PACKAGE=ros2-control-workshop-container
-VERSION:=0.3.0
+VERSION:=0.4.0
 PLATFORM=linux/amd64
 # PLATFORM=linux/arm64
 CONTAINER:=ghcr.io/JosePagan/$(PACKAGE)-$(PLATFORM):$(VERSION)
